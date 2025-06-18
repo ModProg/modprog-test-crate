@@ -33,7 +33,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-rust@${{ steps.toolchain.outputs.cachekey }},cargo-release@${{ env.CARGO_RELEASE_VERSION }},Cargo.lock@${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-rust@${{ steps.toolchain.outputs.cachekey }};cargo-release@${{ env.CARGO_RELEASE_VERSION }};Cargo.lock@${{ hashFiles('**/Cargo.lock') }}
       - run: cargo install cargo-release@${{ env.CARGO_RELEASE_VERSION }}
       - run: git switch -c gh-action-release
       - run: cargo release --no-publish --execute ${{ inputs.bump }}
