@@ -39,7 +39,7 @@ jobs:
             target/
           key: ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};Cargo.lock@${{ hashFiles('**/Cargo.lock') }}
       - name: Select tag to be released
-        if: inputs.override_tag == ""
+        if: "!inputs.override_tag"
         run: echo "VERSION_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
       - name: Checkout tagged commit
         run: git switch --detach $VERSION_TAG
