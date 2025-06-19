@@ -28,6 +28,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
 
       - name: Select tag to be released
         id: select-version
@@ -54,6 +56,9 @@ jobs:
       VERSION_TAG: ${{ needs.select-tag.outputs.version-tag }}
 
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.VERSION_TAG }}
       - uses: dtolnay/rust-toolchain@stable
         id: toolchain
       - uses: actions/cache@v4
