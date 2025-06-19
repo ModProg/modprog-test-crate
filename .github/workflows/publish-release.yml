@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
 
     needs: select-tag
-    if: needs.select-tag.outputs.should-release
+    if: fromJSON(needs.select-tag.outputs.should-release)
 
     env:
       VERSION_TAG: ${{ needs.select-tag.outputs.version-tag }}
