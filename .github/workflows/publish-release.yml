@@ -37,7 +37,7 @@ jobs:
         id: filter-tags
         run: |
           if [ -z "${{inputs.override-tag}}" ]; then
-            echo version-tags=$(comm -3 <(git tag --list --merged | sort) <(gh release list --json tagName -q '.[].tagName' | sort) | grep -e "^v[0-9].*" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+            echo version-tags=$(comm -3 <(git tag --list --merged | sort) <(gh release list --json tagName -q '.[].tagName' | sort) | grep -e "^v[0-9].*" | jq -R -s -c 'split("\n") | map(select(length > 0))') >> $GITHUB_OUTPUT
           else
             echo version-tags='["${{ inputs.override-tag }}"]' >> $GITHUB_OUTPUT
           fi
