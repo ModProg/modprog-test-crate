@@ -17,6 +17,10 @@ env:
   GH_TOKEN: ${{ github.token }}
   VERSION_TAG: ${{ inputs.override_tag }}
 
+permissions:
+  packages: write
+  contents: write
+
 jobs:
   select-tag:
     name: Select Tag
@@ -78,7 +82,12 @@ jobs:
 
       - name: Checkout tagged commit
         run: git switch --detach $VERSION_TAG
+      - name: Check if crate already published
+        id: already-published-check
+        run: cargo info $(cargo metadata --no-deps | jq packages[0].name)@${VERSION_TAG:1}
+        continue-on-error: true
       - run: cargo publish
+        if: "steps.already-published-check.outcome == 'failure'"
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
       - run: gh release create $VERSION_TAG --notes "$(sed -n '/##\s*\['${VERSION_TAG:1}'/,/## \[/p' CHANGELOG.md | sed '1d;$d')"
