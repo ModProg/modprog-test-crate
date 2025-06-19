@@ -1,0 +1,47 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      override_tag:
+        description: override the tag to be released
+        type: string
+        required: false
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_RELEASE_VERSION: 0.25.18
+  GH_TOKEN: ${{ github.token }}
+  VERSION_TAG: ${{ inputs.override_tag }}
+
+jobs:
+  release:
+    name: Publish Release
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        id: toolchain
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};Cargo.lock@${{ hashFiles('**/Cargo.lock') }}
+      - name: Select tag to be released
+        if: ${{ inputs.override_tag == "" }}
+        run: echo "VERSION_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+      - name: Checkout tagged commit
+        run: git switch --detach $VERSION_TAG
+      - run: cargo publish
+      - run: gh release create $VERSION_TAG --notes "$(sed -n '/##\s*\['${VERSION_TAG:1}'/,/## \[/p' CHANGELOG.md | sed '1d;$d')"
