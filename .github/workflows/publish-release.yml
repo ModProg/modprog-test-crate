@@ -84,7 +84,7 @@ jobs:
         run: git switch --detach $VERSION_TAG
       - name: Check if crate already published
         id: already-published-check
-        run: cargo info $(cargo metadata --no-deps | jq packages[0].name)@${VERSION_TAG:1}
+        run: cargo info $(cargo metadata --no-deps --format-version=0 | jq .packages[0].name --raw-output)@${VERSION_TAG:1}
         continue-on-error: true
       - run: cargo publish
         if: "steps.already-published-check.outcome == 'failure'"
