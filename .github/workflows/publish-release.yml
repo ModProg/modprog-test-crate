@@ -21,7 +21,7 @@ permissions:
   contents: write
 
 jobs:
-  select-tag:
+  select-tags:
     name: Select Tags
     runs-on: ubuntu-latest
 
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
       
 
-    needs: select-tag
+    needs: select-tags
     strategy:
       matrix:
         version-tag: ${{ fromJSON(needs.select-tags.outputs.version-tags) }}
