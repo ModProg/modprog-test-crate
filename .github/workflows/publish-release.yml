@@ -35,9 +35,9 @@ jobs:
         id: select-version
         run: |
           if [ -z "${{inputs.override-tag}}" ]; then
-            echo ::set-output version-tag=$(git describe --tags --abbrev=0)
+            echo version-tag=$(git describe --tags --abbrev=0) >> $GITHUB_OUTPUT
           else
-            echo ::set-output version-tag=${{ inputs.override-tag }}
+            echo version-tag=${{ inputs.override-tag }} >> $GITHUB_OUTPUT
           fi
       - name: On automatic tag selection verify that release doesn't exist yet
         id: should-release
