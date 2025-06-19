@@ -40,7 +40,7 @@ jobs:
             target/
           key: ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};cargo-release@${{ env.CARGO_RELEASE_VERSION }};Cargo.lock@${{ hashFiles('**/Cargo.lock') }}
       - run: cargo install cargo-release@${{ env.CARGO_RELEASE_VERSION }}
-      - run: cargo release --no-publish --execute ${{ inputs.bump }}
+      - run: cargo release --no-confirm --no-push --no-publish --execute ${{ inputs.bump }}
       - run: git switch -c gh-action-release-$(git describe --tags --abbrev=0)
-      - run: git push --follow-tags
+      - run: git push --follow-tags --set-upstream origin gh-action-release-$(git describe --tags --abbrev=0)
       - run: gh pr create --title "${{ inputs.bump }} version bump to $(git describe --tags --abbrev=0)" --body ""
