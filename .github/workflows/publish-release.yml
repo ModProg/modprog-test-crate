@@ -48,6 +48,7 @@ jobs:
       
 
     needs: select-tags
+    if: fromJSON(needs.select-tags.outputs.version-tags) != []
     strategy:
       matrix:
         version-tag: ${{ fromJSON(needs.select-tags.outputs.version-tags) }}
