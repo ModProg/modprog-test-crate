@@ -50,7 +50,7 @@ jobs:
     needs: select-tag
     strategy:
       matrix:
-        version-tag: ${{ fromJSON(needs.select-tags.outputs.version-tags }}
+        version-tag: ${{ fromJSON(needs.select-tags.outputs.version-tags) }}
 
     env:
       VERSION_TAG: ${{ matrix.version-tag }}
