@@ -1,6 +1,6 @@
 [package]
 name = "modprog-test-crate"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 categories = []
 description = "crate to test automatic release from github"
