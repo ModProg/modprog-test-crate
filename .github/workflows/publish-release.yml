@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      should-release: ${{ steps.should-release.outcome == 'success' || steps.should-release.outcome == 'skipped' }}
+      should-release: ${{ steps.select-version.outputs.version-tag != '' && (steps.should-release.outcome == 'failure' || steps.should-release.outcome == 'skipped') }}
       version-tag: ${{ steps.select-version.outputs.version-tag }}
 
     steps:
@@ -65,6 +65,11 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};Cargo.lock@${{ hashFiles('**/Cargo.lock') }}
+          restore-key:
+            ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};Cargo.lock@${{ hashFiles('**/Cargo.lock') }}
+            ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};Cargo.lock@
+            ${{ runner.os }};rust@
+            ${{ runner.os }};
 
       - name: Checkout tagged commit
         run: git switch --detach $VERSION_TAG

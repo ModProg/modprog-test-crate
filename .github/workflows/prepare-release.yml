@@ -43,6 +43,15 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};cargo-release@${{ env.CARGO_RELEASE_VERSION }};Cargo.lock@${{ hashFiles('**/Cargo.lock') }}
+          restore-key: |
+            ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};cargo-release@${{ env.CARGO_RELEASE_VERSION }};Cargo.lock@${{ hashFiles('**/Cargo.lock') }}
+            ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};cargo-release@${{ env.CARGO_RELEASE_VERSION }};
+            ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};cargo-release@${{ env.CARGO_RELEASE_VERSION }};
+            ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};cargo-release@
+            ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};Cargo.lock@${{ hashFiles('**/Cargo.lock') }}
+            ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};Cargo.lock@
+            ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};
+            ${{ runner.os }};
       - run: cargo install cargo-release@${{ env.CARGO_RELEASE_VERSION }}
       - run: cargo release --no-confirm --no-push --no-publish --execute ${{ inputs.bump }}
       - run: git switch -c gh-action-release-$(git describe --tags --abbrev=0)
