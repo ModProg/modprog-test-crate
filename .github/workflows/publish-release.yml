@@ -10,8 +10,6 @@ on:
   push:
     branches:
       - main
-    tags:
-      - v*
 
 env:
   CARGO_TERM_COLOR: always
@@ -27,6 +25,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Select tag to be released
+        if: "!inputs.override_tag"
+        run: echo "VERSION_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+      - name: On automatic run, check that release doesn't exist yet
+        if: "!inputs.override_tag"
+        run: gh release view $VERSION_TAG
+
       - uses: dtolnay/rust-toolchain@stable
         id: toolchain
       - uses: actions/cache@v4
@@ -38,9 +44,7 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }};rust@${{ steps.toolchain.outputs.cachekey }};Cargo.lock@${{ hashFiles('**/Cargo.lock') }}
-      - name: Select tag to be released
-        if: "!inputs.override_tag"
-        run: echo "VERSION_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+
       - name: Checkout tagged commit
         run: git switch --detach $VERSION_TAG
       - run: cargo publish
